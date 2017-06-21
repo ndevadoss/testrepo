@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "# Author: Benjamin Reddy\n# Taken from pages 49-50 of O'Neil and Schutt\n#Modified by Nithya D , Thomas D , Juan\n\nlibrary(plyr)\n\nsetwd(\"C:/Users/NithyaDoss/Documents/testrepo/testrepo\")\n\n# http://www1.nyc.gov/site/finance/taxes/property-rolling-sales-data.page\n\n\n# read csv file\nman <- read.csv(\"C:/Nithya/MSDS/Term1/6306_Doing_DS/Week6/Live/Download/rollingsales_manhattan.csv\",skip=4,header=TRUE)\n\n## Check the data\nhead(man)\nsummary(man)\nstr(man) # Very handy function!\n#Compactly display the internal structure of an R object.\n\n## clean/format the data with regular expressions\n## More on these later. For now, know that the\n## pattern \"[^[:digit:]]\" refers to members of the variable name that\n## start with digits. We use the gsub command to replace them with a blank space.\n# We create a new variable that is a \"clean' version of sale.price.\n# And sale.price.n is numeric, not a factor.\nman$SALE.PRICE.N <- as.numeric(gsub(\"[^[:digit:]]\",\"\", man$SALE.PRICE))\ncount(is.na(man$SALE.PRICE.N))\n\nnames(man) <- tolower(names(man)) # make all variable names lower case\n\n## Removed the 1000 delimiter from the sqft and converted the datatype to numeric for year\nman$gross.sqft <- as.numeric(gsub(\"[^[:digit:]]\",\"\", man$gross.square.feet))\nman$land.sqft <- as.numeric(gsub(\"[^[:digit:]]\",\"\", man$land.square.feet))\nman$year.built <- as.numeric(as.character(man$year.built))\n\n\n## do a bit of exploration to make sure there's not anything\n## weird going on with sale prices\nattach(man)\nhist(sale.price.n) \ndetach(man)\n\n## keep only the actual sales\n\nman.sale <- man[man$sale.price.n!=0,]\nplot(man.sale$gross.sqft,man.sale$sale.price.n)\nplot(log10(man.sale$gross.sqft),log10(man.sale$sale.price.n))\n\n## for now, let's look at 1-, 2-, and 3-family homes\nman.homes <- man.sale[which(grepl(\"FAMILY\",man.sale$building.class.category)),]\ndim(man.homes)\nplot(log10(man.homes$gross.sqft),log10(man.homes$sale.price.n))\nsummary(man.homes[which(man.homes$sale.price.n<100000),])\n\n\n## remove outliers that seem like they weren't actual sales\nman.homes$outliers <- (log10(man.homes$sale.price.n) <=5) + 0\nman.homes <- man.homes[which(man.homes$outliers==0),]\nplot(log10(man.homes$gross.sqft),log10(man.homes$sale.price.n))\n\n",
+    "created" : 1497900058907.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1111275899",
+    "id" : "7F62CDED",
+    "lastKnownWriteTime" : 1497902069,
+    "last_content_update" : 1497902069523,
+    "path" : "~/testrepo/testrepo/Analysis/Rolling_Manhattan.R",
+    "project_path" : "Analysis/Rolling_Manhattan.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

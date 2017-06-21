@@ -1,0 +1,9 @@
+{
+    "path" : "~/testrepo/testrepo",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
